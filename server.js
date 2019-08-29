@@ -190,3 +190,21 @@ app.post('/getSubscriberPreview', (req, res) => {
         });
 	});
 });
+
+app.post('/checkValidity', (req, res) => {
+	let count = req.body.count;
+	let url = req.body.url;
+	var options = {
+		method: 'HEAD',
+		uri: url
+	};
+
+	request(options)
+	.then(function(result) {
+		res.send({count: count, value: 'True'});
+	})
+	.catch(function(err) {
+		console.log("There was an error");
+		res.send({count: count, value: 'False'});
+	})
+});

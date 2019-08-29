@@ -14,6 +14,7 @@ $(document).ready(function(){
 		$('#emailSelect').hide();
 		$('#deSelect').hide();
 		$('#updateButton').hide();
+		$('#base-url-validate-entry').hide();
 		$.ajax({
 	        type: "GET",
 	        url: "/getEmails",
@@ -107,6 +108,7 @@ $(document).ready(function(){
 			success: function(res) {
 				$('#spinna').hide();
 				$('#updateButton').show();
+				$('#base-url-validate-entry').show();
 				console.log(res);
 				if (res['Results']) {
 					let output = `
@@ -164,13 +166,16 @@ $(document).ready(function(){
 		  <thead>
 		    <tr class="slds-line-height_reset">
 		      <th class="" scope="col">
-		        <div class="slds-truncate" title="Opportunity Name">Base URL</div>
+		        <div class="slds-truncate" title="Base URL">Base URL</div>
 		      </th>
 		      <th class="" scope="col">
-		        <div class="slds-truncate" title="Account Name">Path</div>
+		        <div class="slds-truncate" title="URL Path">Path</div>
 		      </th>
 		      <th class="" scope="col">
-		        <div class="slds-truncate" title="Close Date">Valid</div>
+		        <div class="slds-truncate" title="Matches Base">Matches Base URL</div>
+		      </th>
+		      <th class="" scope="col">
+		        <div class="slds-truncate" title="Validity">Valid URL</div>
 		      </th>
 		    </tr>
 		    <tbody>`;
@@ -178,24 +183,47 @@ $(document).ready(function(){
     	console.log(html);
     	let regex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
     	let results;
+    	let baseUrl = $('#base-url-input').val();
+    	console.log(baseUrl);
+    	let count = 0;
     	while ((results = regex.exec(html)) != null) {
     		console.log(results);
+    		let fullUrl = results[0];
     		let base = results[1];
     		let path = '';
+    		let matches = 'False';
+    		
     		if (results[4]) {
     			path = results[4];
     		}
+    		if (baseUrl == base) {
+    			matches = 'True'
+    		}
     		output+=`<tr class="slds-hint-parent">
-		      <th data-label="Opportunity Name" scope="row">
+		      <th data-label="Base URL" scope="row">
 		        <div class="slds-truncate" title="Base URL">${base}</div>
 		      </th>
-		      <td data-label="Account Name">
+		      <td data-label="URL Path">
 		        <div class="slds-truncate" title="Sample Path">${path}</div>
 		      </td>
-		      <td data-label="Close Date">
-		        <div class="slds-truncate" title="True">True</div>
+		      <td data-label="Matches Base">
+		        <div class="slds-truncate" title="Matches Result">${matches}</div>
+		      </td>
+		      <td data-label="Validity">
+		        <div class="slds-truncate" title="Valid URL" id="valid-field-${count}"></div>
 		      </td>
 		    </tr>`
+		    
+		    $.ajax({
+		    	type: "POST",
+		    	url: "/checkValidity",
+		    	data: {url: fullUrl, count: count},
+		    	success: function(res) {
+		    		console.log(res);
+		    		$(`#valid-field-${res.count}`).replaceWith(`<div class="slds-truncate" title="Valid URL" id="valid-field-${res.count}">${res.value}</div>`);
+		    	}
+		    })
+		    count+=1;
     	}
 
     	output+=`</tbody></thead>
