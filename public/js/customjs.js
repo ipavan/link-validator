@@ -22,7 +22,6 @@ $(document).ready(function(){
 	        	emailsLoaded = true;
 	        	showPicklists();
 	         	emailAssetData = res.body.items;
-	         	console.log(res.body.items);
 	         	if (res.body.items) {
 		         	let output = `
 					 	<div id="emailReplace">
@@ -54,7 +53,6 @@ $(document).ready(function(){
         	url: "/getDEs",
         	success: function(res) {
         		desLoaded = true;
-        		console.log(res);
         		showPicklists();
         		if (res['Results']) {
 	        		let output = `
@@ -66,7 +64,6 @@ $(document).ready(function(){
 						        <option value="Unselected">Please Select a Data Extension to test against</option>`;
 					let count = 0;
 	        		res['Results'].forEach(function(item) {
-	        			console.log(item);
 	        			output += `<option value=${count}>${item['Name'][0]}</option>`;
 	        			externalDEKeys.push(item['CustomerKey'][0]);
 	        			subscriberKeys.push(item['SendableDataExtensionField'][0]['Name'][0]);
@@ -109,7 +106,6 @@ $(document).ready(function(){
 				$('#spinna').hide();
 				$('#updateButton').show();
 				$('#base-url-validate-entry').show();
-				console.log(res);
 				if (res['Results']) {
 					let output = `
 					 	<div id="subscribersList">
@@ -137,8 +133,8 @@ $(document).ready(function(){
 	}
 
 	$("#validateButton").click(function(){
+		$('#links').hide();
 		$('#spinna').show();
-        console.log("get sub preview");
         let row = $('#subscriberIds').val();
         let emailId = emails[$('#emails').val()];
         let deId = deObjectId[$('#denames').val()];
@@ -149,11 +145,9 @@ $(document).ready(function(){
         	data: {row: row, emailId: emailId, deId: deId},
         	success: function(res) {
         		$('#spinna').hide();
-        		console.log(res);
         		let views = res.body.message.views;
         		views.forEach(function(item) {
         			if (item.contentType.includes('textBody')) {
-        				console.log('Got the htmlbody');
         				extractLinks(item.content);
         			}
         		});
@@ -180,23 +174,21 @@ $(document).ready(function(){
 		    </tr>
 		    <tbody>`;
 
-    	console.log(html);
     	let regex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
     	let results;
     	let baseUrl = $('#base-url-input').val();
-    	console.log(baseUrl);
     	let count = 0;
     	while ((results = regex.exec(html)) != null) {
-    		console.log(results);
     		let fullUrl = results[0];
     		let base = results[1];
+    		let subBase = results[3];
     		let path = '';
     		let matches = 'False';
     		
     		if (results[4]) {
     			path = results[4];
     		}
-    		if (baseUrl == base) {
+    		if (baseUrl.includes(subBase)) {
     			matches = 'True'
     		}
     		output+=`<tr class="slds-hint-parent">
@@ -219,7 +211,6 @@ $(document).ready(function(){
 		    	url: "/checkValidity",
 		    	data: {url: fullUrl, count: count},
 		    	success: function(res) {
-		    		console.log(res);
 		    		$(`#valid-field-${res.count}`).replaceWith(`<div class="slds-truncate" title="Valid URL" id="valid-field-${res.count}">${res.value}</div>`);
 		    	}
 		    })
@@ -228,7 +219,7 @@ $(document).ready(function(){
 
     	output+=`</tbody></thead>
 		</table>`;
-
+		$('#links').show();
 		$('#links').replaceWith(output);
     }
 });
