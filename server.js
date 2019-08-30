@@ -37,12 +37,12 @@ function getAccessToken() {
 			console.log('getting new token');
 			var options = {
 	            method: 'POST',
-	            uri: `https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.auth.marketingcloudapis.com/v2/token`,
+	            uri: `https://${process.env.ENDPOINT}.auth.marketingcloudapis.com/v2/token`,
 	            body: {
 	              'grant_type': 'client_credentials',
-	              'client_id': `0yx4e8t1xqsegm9ur7heq9tm`,
-	              'client_secret': `Q4QiUd1WxFAPlwR2LGzxXnKK`,
-	              'account_id':'500009370'
+	              'client_id': `${process.env.CLIENTID}`,
+	              'client_secret': `${process.env.CLIENT_SECRET}`,
+	              'account_id':`${process.env.MID}`
 	            },
 	            json: true
 	        }
@@ -67,7 +67,7 @@ function getEmails() {
 	return new Promise((resolve, reject) => {
 		var options = {
             method: 'POST',
-            uri: `https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.rest.marketingcloudapis.com/asset/v1/content/assets/query`,
+            uri: `https://${process.env.ENDPOINT}.rest.marketingcloudapis.com/asset/v1/content/assets/query`,
             headers: {
 			    'Content-Type': 'application/json',
 			    'Authorization': `Bearer ${global.marketingCloudAccessToken.access_token}`
@@ -111,10 +111,10 @@ app.get('/getEmails', (req, res) => {
 app.get('/getDEs', (req, res) => {
 	getAccessToken()
 	.then((data) => {
-		const xml = `<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">    <s:Header>        <a:Action s:mustUnderstand="1">Retrieve</a:Action>        <a:To s:mustUnderstand="1">https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.soap.marketingcloudapis.com/Service.asmx</a:To>        <fueloauth xmlns="http://exacttarget.com">${global.marketingCloudAccessToken.access_token}</fueloauth>    </s:Header>    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">      <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">         <RetrieveRequest>            <ObjectType>DataExtension</ObjectType>            <Properties>ObjectID</Properties>            <Properties>CustomerKey</Properties>       <Properties>SendableDataExtensionField.Name</Properties>  <Properties>SendableSubscriberField.Name</Properties>   <Properties>Name</Properties>            <Filter xsi:type="SimpleFilterPart">                    <Property>IsSendable</Property>                    <SimpleOperator>equals</SimpleOperator>                    <Value>True</Value>            </Filter>         </RetrieveRequest>      </RetrieveRequestMsg>    </s:Body></s:Envelope>`;
+		const xml = `<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">    <s:Header>        <a:Action s:mustUnderstand="1">Retrieve</a:Action>        <a:To s:mustUnderstand="1">https://${process.env.ENDPOINT}.soap.marketingcloudapis.com/Service.asmx</a:To>        <fueloauth xmlns="http://exacttarget.com">${global.marketingCloudAccessToken.access_token}</fueloauth>    </s:Header>    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">      <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">         <RetrieveRequest>            <ObjectType>DataExtension</ObjectType>            <Properties>ObjectID</Properties>            <Properties>CustomerKey</Properties>       <Properties>SendableDataExtensionField.Name</Properties>  <Properties>SendableSubscriberField.Name</Properties>   <Properties>Name</Properties>            <Filter xsi:type="SimpleFilterPart">                    <Property>IsSendable</Property>                    <SimpleOperator>equals</SimpleOperator>                    <Value>True</Value>            </Filter>         </RetrieveRequest>      </RetrieveRequestMsg>    </s:Body></s:Envelope>`;
 		var options = {
 		    method: 'POST',
-		    uri: `https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.soap.marketingcloudapis.com/Service.asmx`,
+		    uri: `https://${process.env.ENDPOINT}.soap.marketingcloudapis.com/Service.asmx`,
 		    headers: {
 		        'Content-Type': 'text/xml'
 		    },
@@ -141,10 +141,10 @@ app.post('/getSubs', (req, res) => {
 	let sendableField = req.body.sendableKey;
 	getAccessToken()
 	.then((data) => {
-		let xml = `<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">    <s:Header>        <a:Action s:mustUnderstand="1">Retrieve</a:Action>        <a:To s:mustUnderstand="1">https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.soap.marketingcloudapis.com/Service.asmx</a:To>        <fueloauth xmlns="http://exacttarget.com">${global.marketingCloudAccessToken.access_token}</fueloauth>    </s:Header>    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">            <RetrieveRequest>                        <ObjectType>DataExtensionObject[${deKey}]</ObjectType>                        <Properties>${sendableField}</Properties>                     </RetrieveRequest>        </RetrieveRequestMsg>    </s:Body></s:Envelope>`;
+		let xml = `<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">    <s:Header>        <a:Action s:mustUnderstand="1">Retrieve</a:Action>        <a:To s:mustUnderstand="1">https://${process.env.ENDPOINT}.soap.marketingcloudapis.com/Service.asmx</a:To>        <fueloauth xmlns="http://exacttarget.com">${global.marketingCloudAccessToken.access_token}</fueloauth>    </s:Header>    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">            <RetrieveRequest>                        <ObjectType>DataExtensionObject[${deKey}]</ObjectType>                        <Properties>${sendableField}</Properties>                     </RetrieveRequest>        </RetrieveRequestMsg>    </s:Body></s:Envelope>`;
 		var options = {
 		    method: 'POST',
-		    uri: `https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.soap.marketingcloudapis.com/Service.asmx`,
+		    uri: `https://${process.env.ENDPOINT}.soap.marketingcloudapis.com/Service.asmx`,
 		    headers: {
 		        'Content-Type': 'text/xml'
 		    },
@@ -174,7 +174,7 @@ app.post('/getSubscriberPreview', (req, res) => {
 	.then((data) => {
 		var options = {
             method: 'POST',
-            uri: `https://mcmn2cc-hkrhh8yfwb0v0mz8y2q4.rest.marketingcloudapis.com/guide/v1/emails/${emailId}/dataExtension/${deId}/contacts/key:${row}/preview`,
+            uri: `https://${process.env.ENDPOINT}.rest.marketingcloudapis.com/guide/v1/emails/${emailId}/dataExtension/${deId}/contacts/key:${row}/preview`,
             headers: {
 			    'Content-Type': 'application/json',
 			    'Authorization': `Bearer ${global.marketingCloudAccessToken.access_token}`

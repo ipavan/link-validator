@@ -179,7 +179,7 @@ $(document).ready(function(){
     	let baseUrl = $('#base-url-input').val();
     	let count = 0;
     	while ((results = regex.exec(html)) != null) {
-    		console.log(results);
+    		//console.log(results);
     		let fullUrl = results[0];
     		let base = results[1];
     		let subBase = results[3];
@@ -189,7 +189,17 @@ $(document).ready(function(){
     		if (results[4]) {
     			path = results[4];
     		}
-    		if (subBase.includes(baseUrl)) {
+    		//grab just the url term
+    		let start = subBase.indexOf(".");
+    		let urlTerm = subBase;
+			let end = subBase.indexOf(".", start+1);
+			if (end == -1) {
+				urlTerm = urlTerm.substring(0, start);
+			} else {
+				urlTerm = urlTerm.substring(start+1, end);
+			}
+    		
+    		if (baseUrl == urlTerm) {
     			matches = 'True'
     		}
     		output+=`<tr class="slds-hint-parent">
