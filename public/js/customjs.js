@@ -179,6 +179,7 @@ $(document).ready(function(){
     	let baseUrl = $('#base-url-input').val();
     	let count = 0;
     	while ((results = regex.exec(html)) != null) {
+    		console.log(results);
     		let fullUrl = results[0];
     		let base = results[1];
     		let subBase = results[3];
@@ -188,7 +189,7 @@ $(document).ready(function(){
     		if (results[4]) {
     			path = results[4];
     		}
-    		if (baseUrl.includes(subBase)) {
+    		if (subBase.includes(baseUrl)) {
     			matches = 'True'
     		}
     		output+=`<tr class="slds-hint-parent">
