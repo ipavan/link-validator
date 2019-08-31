@@ -199,7 +199,16 @@ $(document).ready(function(){
 				urlTerm = urlTerm.substring(start+1, end);
 			}
     		
-    		if (baseUrl == urlTerm) {
+    		if (baseUrl.indexOf(",") > 0) {
+    			//I've got multiple 
+    			let urls = baseUrl.split(",");
+    			urls.forEach(function(item) {
+    				if (item == urlTerm) {
+    					matches = 'True';
+    				}
+    			}) 
+    		}
+    		else if (baseUrl == urlTerm) {
     			matches = 'True'
     		}
     		output+=`<tr class="slds-hint-parent">
