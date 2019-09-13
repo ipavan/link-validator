@@ -262,7 +262,11 @@ $(document).ready(function(){
 		    	url: "/checkValidity",
 		    	data: {url: fullUrl, count: count},
 		    	success: function(res) {
-		    		$(`#valid-field-${res.count}`).replaceWith(`<div class="slds-truncate" title="Valid URL" id="valid-field-${res.count}">${res.value}</div>`);
+		    		let resolvedLinkColor = "style='color:red'";
+		    		if (res.value == 'True') {
+		    			resolvedLinkColor = "style='color:green'";
+		    		}
+		    		$(`#valid-field-${res.count}`).replaceWith(`<div class="slds-truncate" title="Valid URL" id="valid-field-${res.count}"><p ${resolvedLinkColor}>${res.value}</p></div>`);
 		    	}
 		    })
 		    count+=1;
