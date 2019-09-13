@@ -15,6 +15,7 @@ $(document).ready(function(){
 		$('#deSelect').hide();
 		$('#updateButton').hide();
 		$('#base-url-validate-entry').hide();
+		$('#path-url-validate-entry').hide();
 		$.ajax({
 	        type: "GET",
 	        url: "/getEmails",
@@ -191,20 +192,28 @@ $(document).ready(function(){
     		let path = '';
     		let matches = 'False';
     		let pathMatches ='False';
+    		let baseFontColor = "style='color:red'";
+    		let pathFontColor = "style='color:red'";
     		
     		if (results[4]) {
     			path = results[4];
+    		} else {
+    			pathMatches = 'N/A';
     		}
-    		let paths = path.split('/');
-    		paths.forEach(function(item) {
-    			console.log(item);
-    			let listOfPaths = enteredPaths.split(',');
-    			listOfPaths.forEach(function(itemValue) {
-    				if (item == itemValue) {
-    					pathMatches = 'True';
-    				}
-    			})
-    		});
+    		if path != '' {
+    			let paths = path.split('/');
+	    		paths.forEach(function(item) {
+	    			console.log(item);
+	    			let listOfPaths = enteredPaths.split(',');
+	    			listOfPaths.forEach(function(itemValue) {
+	    				if (item == itemValue) {
+	    					pathMatches = 'True';
+	    					pathFontColor = "style='color:green'";
+	    				}
+	    			})
+	    		});
+    		}
+    		
 
     		//grab just the url term
     		let start = subBase.indexOf(".");
@@ -222,11 +231,13 @@ $(document).ready(function(){
     			urls.forEach(function(item) {
     				if (item == urlTerm) {
     					matches = 'True';
+    					baseFontColor = "style='color:green'";
     				}
     			}) 
     		}
     		else if (baseUrl == urlTerm) {
     			matches = 'True'
+    			baseFontColor = "style='color:green'";
     		}
     		output+=`<tr class="slds-hint-parent">
 		      <th data-label="Base URL" scope="row">
@@ -236,13 +247,13 @@ $(document).ready(function(){
 		        <div class="slds-truncate" title="Sample Path">${path}</div>
 		      </td>
 		      <td data-label="Matches Base">
-		        <div class="slds-truncate" title="Matches Result">${matches}</div>
+		        <div class="slds-truncate" title="Matches Result"><p ${baseFontColor}>${matches}</p></div>
 		      </td>
 		      <td data-label="Validity">
 		        <div class="slds-truncate" title="Valid URL" id="valid-field-${count}"></div>
 		      </td>
 		      <td data-label="PathValidity">
-		        <div class="slds-truncate" title="Valid URL" id="pathvalid-field-${count}">${pathMatches}</div>
+		        <div class="slds-truncate" title="Valid URL" id="pathvalid-field-${count}"><p ${pathFontColor}>${pathMatches}</p></div>
 		      </td>
 		    </tr>`
 		    
