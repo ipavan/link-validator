@@ -200,7 +200,7 @@ $(document).ready(function(){
     		} else {
     			pathMatches = 'N/A';
     		}
-    		if path != '' {
+    		if (path != '') {
     			let paths = path.split('/');
 	    		paths.forEach(function(item) {
 	    			console.log(item);
