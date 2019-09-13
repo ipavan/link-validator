@@ -171,6 +171,9 @@ $(document).ready(function(){
 		      <th class="" scope="col">
 		        <div class="slds-truncate" title="Validity">Valid URL</div>
 		      </th>
+		      <th class="" scope="col">
+		        <div class="slds-truncate" title="PathValidity">Valid Path</div>
+		      </th>
 		    </tr>
 		    <tbody>`;
 
@@ -179,7 +182,7 @@ $(document).ready(function(){
     	let baseUrl = $('#base-url-input').val();
     	let count = 0;
     	while ((results = regex.exec(html)) != null) {
-    		//console.log(results);
+    		console.log(results);
     		let fullUrl = results[0];
     		let base = results[1];
     		let subBase = results[3];
@@ -189,6 +192,11 @@ $(document).ready(function(){
     		if (results[4]) {
     			path = results[4];
     		}
+    		let paths = path.split('/');
+    		for val in path {
+    			console.log(val);
+    		}
+
     		//grab just the url term
     		let start = subBase.indexOf(".");
     		let urlTerm = subBase;
@@ -223,6 +231,9 @@ $(document).ready(function(){
 		      </td>
 		      <td data-label="Validity">
 		        <div class="slds-truncate" title="Valid URL" id="valid-field-${count}"></div>
+		      </td>
+		      <td data-label="PathValidity">
+		        <div class="slds-truncate" title="Valid URL" id="pathvalid-field-${count}"></div>
 		      </td>
 		    </tr>`
 		    
