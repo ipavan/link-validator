@@ -106,6 +106,7 @@ $(document).ready(function(){
 				$('#spinna').hide();
 				$('#updateButton').show();
 				$('#base-url-validate-entry').show();
+				$('#path-url-validate-entry').show();
 				if (res['Results']) {
 					let output = `
 					 	<div id="subscribersList">
@@ -180,6 +181,7 @@ $(document).ready(function(){
     	let regex = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
     	let results;
     	let baseUrl = $('#base-url-input').val();
+    	let enteredPaths = $('#path-url-input').val();
     	let count = 0;
     	while ((results = regex.exec(html)) != null) {
     		console.log(results);
@@ -188,6 +190,7 @@ $(document).ready(function(){
     		let subBase = results[3];
     		let path = '';
     		let matches = 'False';
+    		let pathMatches ='False';
     		
     		if (results[4]) {
     			path = results[4];
@@ -195,6 +198,12 @@ $(document).ready(function(){
     		let paths = path.split('/');
     		paths.forEach(function(item) {
     			console.log(item);
+    			let listOfPaths = enteredPaths.split(',');
+    			listOfPaths.forEach(function(itemValue) {
+    				if (item == itemValue) {
+    					pathMatches = 'True';
+    				}
+    			})
     		});
 
     		//grab just the url term
@@ -233,7 +242,7 @@ $(document).ready(function(){
 		        <div class="slds-truncate" title="Valid URL" id="valid-field-${count}"></div>
 		      </td>
 		      <td data-label="PathValidity">
-		        <div class="slds-truncate" title="Valid URL" id="pathvalid-field-${count}"></div>
+		        <div class="slds-truncate" title="Valid URL" id="pathvalid-field-${count}">${pathMatches}</div>
 		      </td>
 		    </tr>`
 		    
