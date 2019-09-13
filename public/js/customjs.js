@@ -199,6 +199,7 @@ $(document).ready(function(){
     			path = results[4];
     		} else {
     			pathMatches = 'N/A';
+    			pathFontColor = "style='color:black'";
     		}
     		if (path != '') {
     			let paths = path.split('/');
