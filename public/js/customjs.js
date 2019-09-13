@@ -193,9 +193,9 @@ $(document).ready(function(){
     			path = results[4];
     		}
     		let paths = path.split('/');
-    		for val in path {
-    			console.log(val);
-    		}
+    		paths.forEach(function(item) {
+    			console.log(item);
+    		});
 
     		//grab just the url term
     		let start = subBase.indexOf(".");
